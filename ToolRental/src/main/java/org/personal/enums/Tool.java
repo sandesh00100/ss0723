@@ -15,23 +15,23 @@ public enum Tool {
     JAKD("JAKD", ToolType.JACKHAMMER, "DeWalt"),
     JAKR("JAKR", ToolType.JACKHAMMER, "Ridgid");
 
-    private static final Map<String, Tool> NAME_TO_TOOL = new HashMap<>();
+    private static final Map<String, Tool> CODE_TO_TOOL = new HashMap<>();
 
     static {
-        for (Tool e: values()) {
-            NAME_TO_TOOL.put(e.name, e);
+        for (Tool tool: values()) {
+            CODE_TO_TOOL.put(tool.code, tool);
         }
     }
-    private final String name;
+    private final String code;
     private final ToolType type;
     private final String brand;
 
     /**
      * We could have probably gone without the name but just wanted to add it incase the name and the enum differ
-     * @param name
+     * @param code
      * @return
      */
-    public static Tool getToolByName(String name) {
-        return NAME_TO_TOOL.get(name);
+    public static Tool getToolByCode(String code) {
+        return CODE_TO_TOOL.get(code);
     }
 }

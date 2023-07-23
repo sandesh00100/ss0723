@@ -9,7 +9,6 @@ public class DateConverter implements IStringConverter<LocalDate>{
     @Override
     public LocalDate convert(String value) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("DD/MM/YY");
-
         return LocalDate.parse(value, formatter);
     }
 }

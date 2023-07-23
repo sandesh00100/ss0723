@@ -2,11 +2,6 @@ package org.personal.args;
 
 import com.beust.jcommander.Parameter;
 import lombok.Data;
-import org.personal.converters.DateConverter;
-
-import java.time.LocalDate;
-import java.util.Date;
-
 @Data
 public class CheckoutArgs {
     // TODO: Check how we can add an interactive menu
