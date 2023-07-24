@@ -95,45 +95,43 @@ public class ToolRentalUtility {
     }
 
     private int getChargableDays(ToolType toolType, LocalDate checkOutDate, LocalDate returnDate) {
-        // Adding 1 because we need to include both the start and end date
-        long daysBetweenDates = ChronoUnit.DAYS.between(checkOutDate, returnDate) + 1;
-        DayOfWeek checkOutDay = checkOutDate.getDayOfWeek();
-        DayOfWeek returnDay = returnDate.getDayOfWeek();
-
-        int weekDayCount = 0;
-        int weekEndDayCount = 0;
-        if (daysBetweenDates == 7) {
-            weekDayCount = 5;
-            weekEndDayCount = 2;
-        } else if (daysBetweenDates > 7) {
-           if (isWeekend(checkOutDay)) {
-               weekEndDayCount += DayOfWeek.SUNDAY.getValue() - checkOutDay.getValue() + 1;
-           } else {
-               weekEndDayCount += 2;
-               weekDayCount += DayOfWeek.FRIDAY.getValue() - checkOutDay.getValue() + 1;
-           }
-
-           if (isWeekend(returnDay)) {
-               weekDayCount += 5;
-               weekEndDayCount += DayOfWeek.SUNDAY.getValue() - checkOutDay.getValue() + 1;
-           } else {
-               weekDayCount += returnDay.getValue();
-           }
-
-           long fullWeeks = (daysBetweenDates - weekDayCount - weekEndDayCount)/7;
-           weekDayCount += (fullWeeks*5);
-           weekEndDayCount += (fullWeeks*2);
-        } else {
-          for (int i=0; i<daysBetweenDates; i++) {
-              DayOfWeek day = DayOfWeek.of(((checkOutDay.getValue() + i) % 7)+1);
-              if (isWeekend(day)) {
-                 weekEndDayCount++;
-              } else {
-                  weekDayCount++;
-              }
-          }
-        }
+        // TODO Finish this
         return -1;
+    }
+
+    private long getWeekEndDaysBetweenDates(LocalDate startDate, LocalDate endDate) {
+        // Adding 1 because we need to include both the start and end date
+        long daysBetweenDates = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        return daysBetweenDates - getWeekDaysBetweenDates(startDate, endDate);
+    }
+
+    // TODO revisit this
+    private long getWeekDaysBetweenDates(LocalDate startDate, LocalDate endDate) {
+        // Adding 1 because we need to include both the start and end date
+        long daysBetweenDates = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        DayOfWeek checkOutDay = startDate.getDayOfWeek();
+        DayOfWeek returnDay = endDate.getDayOfWeek();
+
+        long weekDayCount = 0;
+        if (daysBetweenDates == 7) return 5;
+        if (daysBetweenDates > 7) {
+            if (!isWeekend(checkOutDay)) {
+                weekDayCount += DayOfWeek.FRIDAY.getValue() - checkOutDay.getValue() + 1;
+            }
+
+            if (isWeekend(returnDay)) {
+                weekDayCount += returnDay.getValue();
+            }
+
+            long fullWeeks = (daysBetweenDates - weekDayCount) /7;
+            weekDayCount += (fullWeeks*5);
+        } else {
+            for (int i=0; i<daysBetweenDates; i++) {
+                DayOfWeek day = DayOfWeek.of(((checkOutDay.getValue() + i) % 7)+1);
+                if (!isWeekend(day)) weekDayCount++;
+            }
+        }
+        return weekDayCount;
     }
 
 
