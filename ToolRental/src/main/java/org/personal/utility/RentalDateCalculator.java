@@ -4,22 +4,23 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+// TODO Might want to make this static
 public class RentalDateCalculator {
     public int getWeekDaysBetweenDates(LocalDate startDate, LocalDate endDate) {
         // Adding 1 because we need to include both the start and end date
         long daysBetweenDates = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-        DayOfWeek checkOutDay = startDate.getDayOfWeek();
+        DayOfWeek startDay = startDate.getDayOfWeek();
         DayOfWeek returnDay = endDate.getDayOfWeek();
 
         if (daysBetweenDates == 7) return 5;
         if (daysBetweenDates > 7) {
             int partialWeekDays = 0;
-            // Calculate partial days from checkOutDay week
-            if (isWeekDay(checkOutDay)) {
-                partialWeekDays += DayOfWeek.FRIDAY.getValue() - checkOutDay.getValue() + 1;
+            // Calculate partial days from startDay week
+            if (isWeekDay(startDay)) {
+                partialWeekDays += DayOfWeek.FRIDAY.getValue() - startDay.getValue() + 1;
             }
 
             // Calculating partial weekdays for checkout day week
@@ -36,7 +37,7 @@ public class RentalDateCalculator {
             // Iterate through all the days and count the days
             // This should be constant time, decided to do this be
             for (int i=0; i<daysBetweenDates; i++) {
-                int dayValue =((checkOutDay.ordinal() + i) % 7)+1;
+                int dayValue =((startDay.ordinal() + i) % 7)+1;
                 DayOfWeek day = DayOfWeek.of(dayValue);
                 if (isWeekDay(day)) weekDayCount++;
             }
@@ -50,21 +51,31 @@ public class RentalDateCalculator {
         return (int) (daysBetweenDates - getWeekDaysBetweenDates(startDate, endDate));
     }
 
-    private boolean isWeekDay(DayOfWeek dayOfWeek) {
+    public boolean isWeekDay(DayOfWeek dayOfWeek) {
         return !(DayOfWeek.SATURDAY.equals(dayOfWeek) || DayOfWeek.SUNDAY.equals(dayOfWeek));
     }
 
-    public List<LocalDate> getHolidaysBetweenDates(LocalDate startDate, LocalDate endDate) {
-        List<LocalDate> holidays = new ArrayList<>();
+    public boolean isWeekDay(LocalDate date) {
+        return isWeekDay(date.getDayOfWeek());
+    }
+
+    public Set<LocalDate> getHolidaysBetweenDates(LocalDate startDate, LocalDate endDate) {
+        Set<LocalDate> holidays = new HashSet<>();
         for (int year=startDate.getYear(); year <= endDate.getYear(); year++){
-           LocalDate independenceDay = getIndependenceDayForYear(year);
-           LocalDate laborDay = getLaborDayForYear(year);
-           if (dateIsInRange(startDate, endDate, independenceDay)) holidays.add(independenceDay);
-           if (dateIsInRange(startDate, endDate, laborDay)) holidays.add(laborDay);
+           Set<LocalDate> allHolidays = getHolidaysForYear(year);
+           for (LocalDate holiday: allHolidays) {
+               if (dateIsInRange(startDate, endDate, holiday)) holidays.add(holiday);
+           }
         }
         return holidays;
     }
 
+    public Set<LocalDate> getHolidaysForYear(int year) {
+       Set<LocalDate> holidays = new HashSet<>();
+       holidays.add(getIndependenceDayForYear(year));
+       holidays.add(getLaborDayForYear(year));
+       return holidays;
+    }
     public LocalDate getIndependenceDayForYear(int year) {
         return LocalDate.of(year, Month.JULY, 4);
     }

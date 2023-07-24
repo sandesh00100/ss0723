@@ -12,16 +12,20 @@ import org.personal.utility.RentalDateCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Value
 public class ToolRentalUtility {
     private static Logger logger = LoggerFactory.getLogger(ToolRentalUtility.class);
+    private DecimalFormat df = new DecimalFormat("0.00");
     public static void main(String ...args) {
         logger = LoggerFactory.getLogger(ToolRentalUtility.class);
         logger.debug("Arguments entered " + Arrays.toString(args));
@@ -91,22 +95,43 @@ public class ToolRentalUtility {
 
     public RentalAgreement calculateRentalAgreement(CheckOut checkOut) throws CheckoutValidationException {
         validateCheckout(checkOut);
+        ToolType toolType = checkOut.getTool().getType();
+        LocalDate checkoutDate = checkOut.getCheckOutDate();
+        LocalDate dueDate = checkoutDate.plusDays(checkOut.getRentalDayCount()-1);
+        int chargeDays = getChargableDays(toolType, checkOut.getCheckOutDate(), dueDate);
+        double preDiscountCharge = chargeDays * toolType.getDailyCharge();
+        double discountAmount = preDiscountCharge * ((double) checkOut.getDiscountPercentage() /100);
+        double finalCharge = preDiscountCharge - discountAmount;
 
-        return RentalAgreement.builder().build();
+        return RentalAgreement.builder()
+                .chargeDays(chargeDays)
+                .dueDate(dueDate)
+                .discountAmount(discountAmount)
+                .finalCharge(finalCharge)
+                .build();
     }
 
-    private int getChargableDays(ToolType toolType, LocalDate checkOutDate, LocalDate returnDate) {
-        // TODO Finish this
+    private int getChargableDays(ToolType toolType, LocalDate checkOutDate, LocalDate dueDate) {
         // TODO maybe use spring for this
         RentalDateCalculator rentalDateCalculator = new RentalDateCalculator();
         int chargableDays = 0;
         if (toolType.isWeekDayCharge()) {
-            chargableDays += rentalDateCalculator.getWeekDaysBetweenDates(checkOutDate, returnDate);
+            chargableDays += rentalDateCalculator.getWeekDaysBetweenDates(checkOutDate, dueDate);
         }
         if (toolType.isWeekendCharge()) {
-            chargableDays += rentalDateCalculator.getWeekEndDaysBetweenDates(checkOutDate, returnDate);
+            chargableDays += rentalDateCalculator.getWeekEndDaysBetweenDates(checkOutDate, dueDate);
         }
 
+        if (toolType.isHolidayCharge()) {
+            Set<LocalDate> holidays = rentalDateCalculator.getHolidaysBetweenDates(checkOutDate, dueDate);
+            for (LocalDate holiday: holidays) {
+                boolean canChargeWeekday = rentalDateCalculator.isWeekDay(holiday) && !toolType.isWeekDayCharge();
+                boolean canChargeWeekend = !rentalDateCalculator.isWeekDay(holiday) && !toolType.isWeekendCharge();
+                if (canChargeWeekend || canChargeWeekday) {
+                    chargableDays++;
+                }
+            }
+        }
         return chargableDays;
     }
 

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.personal.utility.RentalDateCalculator;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -95,10 +96,10 @@ public class RentalDateCalculatorTest {
 
     @Test
     public void calculateHolidays(){
-        // TODO Change all of these to localdate.of
+        // TODO Change all of these to localdate.of, might also want to do better testing
         LocalDate startDate = LocalDate.parse("2023-01-01");
         LocalDate endDate = LocalDate.parse("2023-12-31");
-        List<LocalDate> holidaysBetweenDates = rentalDateCalculator.getHolidaysBetweenDates(startDate, endDate);
+        Set<LocalDate> holidaysBetweenDates = rentalDateCalculator.getHolidaysBetweenDates(startDate, endDate);
         assertEquals(2, holidaysBetweenDates.size());
     }
 
@@ -107,7 +108,7 @@ public class RentalDateCalculatorTest {
     public void calculateHolidaysParitalYears(){
         LocalDate startDate = LocalDate.parse("2023-08-01");
         LocalDate endDate = LocalDate.parse("2023-12-31");
-        List<LocalDate> holidaysBetweenDates = rentalDateCalculator.getHolidaysBetweenDates(startDate, endDate);
+        Set<LocalDate> holidaysBetweenDates = rentalDateCalculator.getHolidaysBetweenDates(startDate, endDate);
         assertEquals(1, holidaysBetweenDates.size());
     }
 
@@ -116,7 +117,7 @@ public class RentalDateCalculatorTest {
     public void calculateHolidaysMultipleYears(){
         LocalDate startDate = LocalDate.parse("2023-10-01");
         LocalDate endDate = LocalDate.parse("2026-12-31");
-        List<LocalDate> holidaysBetweenDates = rentalDateCalculator.getHolidaysBetweenDates(startDate, endDate);
+        Set<LocalDate> holidaysBetweenDates = rentalDateCalculator.getHolidaysBetweenDates(startDate, endDate);
         assertEquals(6, holidaysBetweenDates.size());
     }
 
@@ -126,7 +127,7 @@ public class RentalDateCalculatorTest {
         // TODO Change all of these to localdate.of
         LocalDate startDate = LocalDate.parse("2023-10-01");
         LocalDate endDate = LocalDate.parse("2026-01-01");
-        List<LocalDate> holidaysBetweenDates = rentalDateCalculator.getHolidaysBetweenDates(startDate, endDate);
+        Set<LocalDate> holidaysBetweenDates = rentalDateCalculator.getHolidaysBetweenDates(startDate, endDate);
         assertEquals(4, holidaysBetweenDates.size());
     }
 }
