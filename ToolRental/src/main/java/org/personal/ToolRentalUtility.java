@@ -8,6 +8,7 @@ import org.personal.exceptions.CheckoutValidationException;
 import org.personal.exceptions.InvalidCommandLineArgumentException;
 import org.personal.models.CheckOut;
 import org.personal.models.RentalAgreement;
+import org.personal.utility.RentalDateCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +97,17 @@ public class ToolRentalUtility {
 
     private int getChargableDays(ToolType toolType, LocalDate checkOutDate, LocalDate returnDate) {
         // TODO Finish this
-        return -1;
+        // TODO maybe use spring for this
+        RentalDateCalculator rentalDateCalculator = new RentalDateCalculator();
+        int chargableDays = 0;
+        if (toolType.isWeekDayCharge()) {
+            chargableDays += rentalDateCalculator.getWeekDaysBetweenDates(checkOutDate, returnDate);
+        }
+        if (toolType.isWeekendCharge()) {
+            chargableDays += rentalDateCalculator.getWeekEndDaysBetweenDates(checkOutDate, returnDate);
+        }
+
+        return chargableDays;
     }
 
     private void validateCheckout(CheckOut checkOut) throws CheckoutValidationException {
