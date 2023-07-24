@@ -3,6 +3,7 @@ package org.personal;
 import lombok.Value;
 import org.apache.commons.cli.*;
 import org.personal.enums.Tool;
+import org.personal.enums.ToolType;
 import org.personal.exceptions.CheckoutValidationException;
 import org.personal.exceptions.InvalidCommandLineArgumentException;
 import org.personal.models.CheckOut;
@@ -10,9 +11,12 @@ import org.personal.models.RentalAgreement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Value
 public class ToolRentalUtility {
@@ -84,13 +88,64 @@ public class ToolRentalUtility {
         return calculateRentalAgreement(checkOut);
     }
 
+    public RentalAgreement calculateRentalAgreement(CheckOut checkOut) throws CheckoutValidationException {
+        validateCheckout(checkOut);
+
+        return RentalAgreement.builder().build();
+    }
+
+    private int getChargableDays(ToolType toolType, LocalDate checkOutDate, LocalDate returnDate) {
+        // Adding 1 because we need to include both the start and end date
+        long daysBetweenDates = ChronoUnit.DAYS.between(checkOutDate, returnDate) + 1;
+        DayOfWeek checkOutDay = checkOutDate.getDayOfWeek();
+        DayOfWeek returnDay = returnDate.getDayOfWeek();
+
+        int weekDayCount = 0;
+        int weekEndDayCount = 0;
+        if (daysBetweenDates == 7) {
+            weekDayCount = 5;
+            weekEndDayCount = 2;
+        } else if (daysBetweenDates > 7) {
+           if (isWeekend(checkOutDay)) {
+               weekEndDayCount += DayOfWeek.SUNDAY.getValue() - checkOutDay.getValue() + 1;
+           } else {
+               weekEndDayCount += 2;
+               weekDayCount += DayOfWeek.FRIDAY.getValue() - checkOutDay.getValue() + 1;
+           }
+
+           if (isWeekend(returnDay)) {
+               weekDayCount += 5;
+               weekEndDayCount += DayOfWeek.SUNDAY.getValue() - checkOutDay.getValue() + 1;
+           } else {
+               weekDayCount += returnDay.getValue();
+           }
+
+           long fullWeeks = (daysBetweenDates - weekDayCount - weekEndDayCount)/7;
+           weekDayCount += (fullWeeks*5);
+           weekEndDayCount += (fullWeeks*2);
+        } else {
+          for (int i=0; i<daysBetweenDates; i++) {
+              DayOfWeek day = DayOfWeek.of(((checkOutDay.getValue() + i) % 7)+1);
+              if (isWeekend(day)) {
+                 weekEndDayCount++;
+              } else {
+                  weekDayCount++;
+              }
+          }
+        }
+        return -1;
+    }
+
+
+    private boolean isWeekend(DayOfWeek dayOfWeek) {
+        return DayOfWeek.SATURDAY.equals(dayOfWeek) || DayOfWeek.SUNDAY.equals(dayOfWeek);
+    }
+
     private void validateCheckout(CheckOut checkOut) throws CheckoutValidationException {
         if (checkOut.getRentalDayCount() < 1) throw new CheckoutValidationException("rentalDayCount", "it must be 1 or greater");
         int discountPercentage = checkOut.getDiscountPercentage();
         if (discountPercentage < 0 || discountPercentage > 100) throw new CheckoutValidationException("discountPercentage", "it must be between 0-100");
     }
-    public RentalAgreement calculateRentalAgreement(CheckOut checkOut) throws CheckoutValidationException {
-        validateCheckout(checkOut);
-        return null;
-    }
+
+
 }
