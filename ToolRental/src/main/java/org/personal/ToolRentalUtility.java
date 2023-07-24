@@ -99,46 +99,6 @@ public class ToolRentalUtility {
         return -1;
     }
 
-    private long getWeekEndDaysBetweenDates(LocalDate startDate, LocalDate endDate) {
-        // Adding 1 because we need to include both the start and end date
-        long daysBetweenDates = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-        return daysBetweenDates - getWeekDaysBetweenDates(startDate, endDate);
-    }
-
-    // TODO revisit this
-    private long getWeekDaysBetweenDates(LocalDate startDate, LocalDate endDate) {
-        // Adding 1 because we need to include both the start and end date
-        long daysBetweenDates = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-        DayOfWeek checkOutDay = startDate.getDayOfWeek();
-        DayOfWeek returnDay = endDate.getDayOfWeek();
-
-        long weekDayCount = 0;
-        if (daysBetweenDates == 7) return 5;
-        if (daysBetweenDates > 7) {
-            if (!isWeekend(checkOutDay)) {
-                weekDayCount += DayOfWeek.FRIDAY.getValue() - checkOutDay.getValue() + 1;
-            }
-
-            if (isWeekend(returnDay)) {
-                weekDayCount += returnDay.getValue();
-            }
-
-            long fullWeeks = (daysBetweenDates - weekDayCount) /7;
-            weekDayCount += (fullWeeks*5);
-        } else {
-            for (int i=0; i<daysBetweenDates; i++) {
-                DayOfWeek day = DayOfWeek.of(((checkOutDay.getValue() + i) % 7)+1);
-                if (!isWeekend(day)) weekDayCount++;
-            }
-        }
-        return weekDayCount;
-    }
-
-
-    private boolean isWeekend(DayOfWeek dayOfWeek) {
-        return DayOfWeek.SATURDAY.equals(dayOfWeek) || DayOfWeek.SUNDAY.equals(dayOfWeek);
-    }
-
     private void validateCheckout(CheckOut checkOut) throws CheckoutValidationException {
         if (checkOut.getRentalDayCount() < 1) throw new CheckoutValidationException("rentalDayCount", "it must be 1 or greater");
         int discountPercentage = checkOut.getDiscountPercentage();
