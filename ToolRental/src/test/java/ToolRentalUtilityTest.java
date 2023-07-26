@@ -1,5 +1,5 @@
 import org.junit.jupiter.api.Test;
-import org.personal.ToolRentalUtility;
+import org.personal.ToolRentalService;
 import org.personal.enums.Tool;
 import org.personal.exceptions.CheckoutValidationException;
 import org.personal.models.CheckOut;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ToolRentalUtilityTest {
-   ToolRentalUtility toolRentalUtility = new ToolRentalUtility();
+   ToolRentalService toolRentalService = new ToolRentalService();
 
    @Test
     public void rentalDaysUnderOne(){
@@ -24,7 +24,7 @@ public class ToolRentalUtilityTest {
                     .rentalDayCount(0)
                     .discountPercentage(101)
                     .build();
-            toolRentalUtility.calculateRentalAgreement(checkout);
+            toolRentalService.calculateRentalAgreement(checkout);
         });
     }
 
@@ -38,7 +38,7 @@ public class ToolRentalUtilityTest {
                    .rentalDayCount(5)
                    .discountPercentage(101)
                    .build();
-           toolRentalUtility.calculateRentalAgreement(checkout);
+           toolRentalService.calculateRentalAgreement(checkout);
        });
    }
 
@@ -51,7 +51,7 @@ public class ToolRentalUtilityTest {
                 .rentalDayCount(3)
                 .discountPercentage(10)
                 .build();
-        RentalAgreement rentalAgreement = toolRentalUtility.calculateRentalAgreement(checkout);
+        RentalAgreement rentalAgreement = toolRentalService.calculateRentalAgreement(checkout);
 
         assertEquals(2, rentalAgreement.getChargeDays());
 
@@ -59,6 +59,7 @@ public class ToolRentalUtilityTest {
         assertEquals(BigDecimal.valueOf(3.58), rentalAgreement.getFinalCharge());
     }
 
+    // Test 3
     @Test
     public void discountChargeIndependenceDay() throws CheckoutValidationException {
         CheckOut checkout = CheckOut.builder()
@@ -67,7 +68,7 @@ public class ToolRentalUtilityTest {
                 .rentalDayCount(5)
                 .discountPercentage(25)
                 .build();
-        RentalAgreement rentalAgreement = toolRentalUtility.calculateRentalAgreement(checkout);
+        RentalAgreement rentalAgreement = toolRentalService.calculateRentalAgreement(checkout);
 
         assertEquals(3, rentalAgreement.getChargeDays());
 
@@ -76,6 +77,7 @@ public class ToolRentalUtilityTest {
     }
 
 
+    // Test 4
     @Test
     public void discountChargeFreeLaborDay() throws CheckoutValidationException {
         CheckOut checkout = CheckOut.builder()
@@ -84,7 +86,7 @@ public class ToolRentalUtilityTest {
                 .rentalDayCount(6)
                 .discountPercentage(0)
                 .build();
-        RentalAgreement rentalAgreement = toolRentalUtility.calculateRentalAgreement(checkout);
+        RentalAgreement rentalAgreement = toolRentalService.calculateRentalAgreement(checkout);
 
         assertEquals(3, rentalAgreement.getChargeDays());
 
@@ -92,6 +94,7 @@ public class ToolRentalUtilityTest {
         assertEquals(BigDecimal.valueOf(8.97), rentalAgreement.getFinalCharge());
     }
 
+    // Test 4
     @Test
     public void discountFreeIndependenceDayLong() throws CheckoutValidationException {
         CheckOut checkout = CheckOut.builder()
@@ -100,13 +103,15 @@ public class ToolRentalUtilityTest {
                 .rentalDayCount(9)
                 .discountPercentage(0)
                 .build();
-        RentalAgreement rentalAgreement = toolRentalUtility.calculateRentalAgreement(checkout);
+        RentalAgreement rentalAgreement = toolRentalService.calculateRentalAgreement(checkout);
 
         assertEquals(6, rentalAgreement.getChargeDays());
 
         assertEquals(BigDecimal.valueOf(17.94), rentalAgreement.getPreDiscountCharge());
         assertEquals(BigDecimal.valueOf(17.94), rentalAgreement.getFinalCharge());
     }
+
+    // Test 6
     @Test
     public void discountFreeIndependenceDayShort() throws CheckoutValidationException {
         CheckOut checkout = CheckOut.builder()
@@ -115,11 +120,12 @@ public class ToolRentalUtilityTest {
                 .rentalDayCount(4)
                 .discountPercentage(50)
                 .build();
-        RentalAgreement rentalAgreement = toolRentalUtility.calculateRentalAgreement(checkout);
+        RentalAgreement rentalAgreement = toolRentalService.calculateRentalAgreement(checkout);
 
         assertEquals(1, rentalAgreement.getChargeDays());
 
         assertEquals(BigDecimal.valueOf(2.99), rentalAgreement.getPreDiscountCharge());
         assertEquals(BigDecimal.valueOf(1.50).setScale(2, RoundingMode.HALF_UP), rentalAgreement.getFinalCharge());
     }
+
 }

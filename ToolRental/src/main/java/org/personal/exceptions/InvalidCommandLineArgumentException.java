@@ -3,8 +3,10 @@ package org.personal.exceptions;
 
 import lombok.Getter;
 
+/**
+ * This exception is thrown when the app can't parse the invalid command line arguments
+ */
 @Getter
-// TODO: NAME PACKAGES CONSISTENTLY
 public class InvalidCommandLineArgumentException extends Exception{
     private final String argumentName;
     public InvalidCommandLineArgumentException(String argumentName) {

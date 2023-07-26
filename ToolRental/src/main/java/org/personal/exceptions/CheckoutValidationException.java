@@ -2,13 +2,16 @@ package org.personal.exceptions;
 
 import lombok.Getter;
 
+/**
+ * This exception is thrown when user's checkout fails validation
+ */
 @Getter
 public class CheckoutValidationException extends Exception{
     private final String checkoutField;
-    private final String validationFailure;
-    public CheckoutValidationException(String checkoutField, String validationFailure){
+    private final String reason;
+    public CheckoutValidationException(String checkoutField, String  reason){
         super();
         this.checkoutField = checkoutField;
-        this.validationFailure = validationFailure;
+        this.reason =  reason;
     }
 }

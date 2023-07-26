@@ -6,7 +6,10 @@ import lombok.Getter;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO: Add better documentation
+/**
+ * Tool is used to store all the tool constants.
+ * If this wasn't a demo app a database would probably be more appropriate.
+ */
 @AllArgsConstructor
 @Getter
 public enum Tool {
@@ -15,9 +18,11 @@ public enum Tool {
     JAKD("JAKD", ToolType.JACKHAMMER, "DeWalt"),
     JAKR("JAKR", ToolType.JACKHAMMER, "Ridgid");
 
+    // Use this map to quickly look up the tool based on the code
     private static final Map<String, Tool> CODE_TO_TOOL = new HashMap<>();
 
     static {
+        // Set up code to tool map
         for (Tool tool: values()) {
             CODE_TO_TOOL.put(tool.code, tool);
         }
@@ -27,9 +32,7 @@ public enum Tool {
     private final String brand;
 
     /**
-     * We could have probably gone without the name but just wanted to add it incase the name and the enum differ
-     * @param code
-     * @return
+     * Used to get the Tool enum by its cod3
      */
     public static Tool getToolByCode(String code) {
         return CODE_TO_TOOL.get(code);
