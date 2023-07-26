@@ -77,7 +77,13 @@ public class RentalDateCalculator {
        return holidays;
     }
     public LocalDate getIndependenceDayForYear(int year) {
-        return LocalDate.of(year, Month.JULY, 4);
+        LocalDate independenceDay = LocalDate.of(year, Month.JULY, 4);
+        if (DayOfWeek.SATURDAY.equals( independenceDay .getDayOfWeek())) {
+             independenceDay  =  independenceDay .minusDays(1);
+        } else if(DayOfWeek.SUNDAY.equals( independenceDay .getDayOfWeek())){
+             independenceDay  =  independenceDay .plusDays(1);
+        }
+        return  independenceDay ;
     }
 
     public LocalDate getLaborDayForYear(int year) {

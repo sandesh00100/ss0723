@@ -12,6 +12,7 @@ import org.personal.utility.RentalDateCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
@@ -99,13 +100,16 @@ public class ToolRentalUtility {
         LocalDate checkoutDate = checkOut.getCheckOutDate();
         LocalDate dueDate = checkoutDate.plusDays(checkOut.getRentalDayCount()-1);
         int chargeDays = getChargableDays(toolType, checkOut.getCheckOutDate(), dueDate);
-        double preDiscountCharge = chargeDays * toolType.getDailyCharge();
-        double discountAmount = preDiscountCharge * ((double) checkOut.getDiscountPercentage() /100);
-        double finalCharge = preDiscountCharge - discountAmount;
+
+        BigDecimal preDiscountCharge = toolType.getDailyCharge().multiply(BigDecimal.valueOf(chargeDays));
+        BigDecimal discountPercentage = BigDecimal.valueOf((double) checkOut.getDiscountPercentage()/100.0);
+        BigDecimal discountAmount = preDiscountCharge.multiply(discountPercentage);
+        BigDecimal finalCharge = preDiscountCharge.subtract(discountAmount);
 
         return RentalAgreement.builder()
                 .chargeDays(chargeDays)
                 .dueDate(dueDate)
+                .preDiscountCharge(preDiscountCharge)
                 .discountAmount(discountAmount)
                 .finalCharge(finalCharge)
                 .build();
@@ -117,21 +121,15 @@ public class ToolRentalUtility {
         int chargableDays = 0;
         if (toolType.isWeekDayCharge()) {
             chargableDays += rentalDateCalculator.getWeekDaysBetweenDates(checkOutDate, dueDate);
+            if (!toolType.isHolidayCharge()) {
+                Set<LocalDate> holidays = rentalDateCalculator.getHolidaysBetweenDates(checkOutDate, dueDate);
+                chargableDays -= holidays.size();
+            }
         }
         if (toolType.isWeekendCharge()) {
             chargableDays += rentalDateCalculator.getWeekEndDaysBetweenDates(checkOutDate, dueDate);
         }
 
-        if (toolType.isHolidayCharge()) {
-            Set<LocalDate> holidays = rentalDateCalculator.getHolidaysBetweenDates(checkOutDate, dueDate);
-            for (LocalDate holiday: holidays) {
-                boolean canChargeWeekday = rentalDateCalculator.isWeekDay(holiday) && !toolType.isWeekDayCharge();
-                boolean canChargeWeekend = !rentalDateCalculator.isWeekDay(holiday) && !toolType.isWeekendCharge();
-                if (canChargeWeekend || canChargeWeekday) {
-                    chargableDays++;
-                }
-            }
-        }
         return chargableDays;
     }
 

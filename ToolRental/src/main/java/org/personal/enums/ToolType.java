@@ -4,6 +4,7 @@ package org.personal.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,11 +12,11 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 public enum ToolType {
-    LADDER("Ladder", 1.99, true, true, false),
-    CHAINSAW("Chainsaw", 1.49, true, false, true),
-    JACKHAMMER("Jackhammer", 2.49, true, false, false);
+    LADDER("Ladder", BigDecimal.valueOf(1.99), true, true, false),
+    CHAINSAW("Chainsaw", BigDecimal.valueOf(1.49), true, false, true),
+    JACKHAMMER("Jackhammer", BigDecimal.valueOf(2.99), true, false, false);
     private final String name;
-   private final double dailyCharge;
+   private final BigDecimal dailyCharge;
    private final boolean weekDayCharge;
    private final boolean weekendCharge;
    private final boolean holidayCharge;

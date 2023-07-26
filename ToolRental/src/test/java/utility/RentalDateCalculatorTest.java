@@ -3,7 +3,6 @@ package utility;
 import org.junit.jupiter.api.Test;
 import org.personal.utility.RentalDateCalculator;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
