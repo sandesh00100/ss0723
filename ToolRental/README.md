@@ -1,9 +1,9 @@
 # ToolRental App
-## Building App
+## Building
 1. Run `./gradlew build` from the ToolRental directory
 2. Runnable fat jar should be created in the `build/libs` directory
 
-## Running App
+## Running
 Running with no arguments will give you the usage 
 ```
 java -jar ToolRental-1.0-0.jar
