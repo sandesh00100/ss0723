@@ -1,4 +1,4 @@
-package org.personal.exceptions;
+package org.demo.exceptions;
 
 
 import lombok.Getter;

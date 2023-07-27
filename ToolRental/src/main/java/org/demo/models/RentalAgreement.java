@@ -1,11 +1,9 @@
-package org.personal.models;
+package org.demo.models;
 
 import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
 import lombok.Value;
-import org.personal.ToolRentalService;
-import org.personal.enums.Tool;
+import org.demo.ToolRentalService;
+import org.demo.enums.Tool;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

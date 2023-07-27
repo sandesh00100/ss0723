@@ -1,4 +1,4 @@
-package org.personal.enums;
+package org.demo.enums;
 
 
 import lombok.AllArgsConstructor;

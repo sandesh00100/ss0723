@@ -1,4 +1,4 @@
-package org.personal.utility;
+package org.demo.utility;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

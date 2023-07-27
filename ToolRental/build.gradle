@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    // Use lombok for plumbing
+    // Use lombok for removing boiler plate code
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
     // Apache commons cli for the interface
@@ -27,7 +27,7 @@ test {
 jar {
     // Creating a simple fat jar
     manifest {
-        attributes 'Main-Class': 'org.personal.ToolRentalService'
+        attributes 'Main-Class': 'org.demo.ToolRentalService'
     }
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }

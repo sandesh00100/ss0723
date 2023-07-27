@@ -1,7 +1,7 @@
 package utility;
 
 import org.junit.jupiter.api.Test;
-import org.personal.utility.RentalDateCalculator;
+import org.demo.utility.RentalDateCalculator;
 import java.time.LocalDate;
 import java.util.Set;
 

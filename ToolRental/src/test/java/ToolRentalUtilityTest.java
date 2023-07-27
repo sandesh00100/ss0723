@@ -1,9 +1,9 @@
 import org.junit.jupiter.api.Test;
-import org.personal.ToolRentalService;
-import org.personal.enums.Tool;
-import org.personal.exceptions.CheckoutValidationException;
-import org.personal.models.CheckOut;
-import org.personal.models.RentalAgreement;
+import org.demo.ToolRentalService;
+import org.demo.enums.Tool;
+import org.demo.exceptions.CheckoutValidationException;
+import org.demo.models.CheckOut;
+import org.demo.models.RentalAgreement;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

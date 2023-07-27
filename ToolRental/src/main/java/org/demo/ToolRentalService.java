@@ -1,13 +1,13 @@
-package org.personal;
+package org.demo;
 
 import org.apache.commons.cli.*;
-import org.personal.enums.Tool;
-import org.personal.enums.ToolType;
-import org.personal.exceptions.CheckoutValidationException;
-import org.personal.exceptions.InvalidCommandLineArgumentException;
-import org.personal.models.CheckOut;
-import org.personal.models.RentalAgreement;
-import org.personal.utility.RentalDateCalculator;
+import org.demo.enums.Tool;
+import org.demo.enums.ToolType;
+import org.demo.exceptions.CheckoutValidationException;
+import org.demo.exceptions.InvalidCommandLineArgumentException;
+import org.demo.models.CheckOut;
+import org.demo.models.RentalAgreement;
+import org.demo.utility.RentalDateCalculator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,8 +25,13 @@ public class ToolRentalService {
                 .addOption(Option.builder().option("c").hasArg().longOpt("checkoutDate").desc("Date in the MM/DD/YY format. (eg. 07/20/23)").required().build());
 
         HelpFormatter formatter = new HelpFormatter();
-        try {
+        // If no arguments are present show the usage
+        if (args.length == 0) {
+            formatter.printHelp("ToolRentalService",options);
+            System.exit(0);
+        }
 
+        try {
             // Parse the command line arguments
             CommandLineParser parser = new DefaultParser();
             CommandLine line = parser.parse(options, args);
@@ -39,11 +44,11 @@ public class ToolRentalService {
         }
         catch (ParseException exp) {
             System.err.println("Parsing failed because " + exp.getMessage());
-            formatter.printHelp("ant",options);
+            formatter.printHelp("ToolRentalService",options);
             System.exit(-1);
         } catch (InvalidCommandLineArgumentException e) {
             System.err.println("Argument: " + e.getArgumentName() + " is invalid. Please make sure this is in the right format");
-            formatter.printHelp("ant",options);
+            formatter.printHelp("ToolRentalService",options);
             System.exit(-1);
         } catch (CheckoutValidationException e) {
             System.err.println("Checkout field: " + e.getCheckoutField() + " is not valid because " + e.getReason());

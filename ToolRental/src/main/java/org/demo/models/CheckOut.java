@@ -1,8 +1,8 @@
-package org.personal.models;
+package org.demo.models;
 
 import lombok.Builder;
 import lombok.Value;
-import org.personal.enums.Tool;
+import org.demo.enums.Tool;
 
 import java.time.LocalDate;
 
